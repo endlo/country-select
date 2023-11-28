@@ -41,7 +41,3 @@ jobs:
 
       - name: Bundle React app
         run: npm run bundle
-
-      - name: Run Node app
-        run: |
-          node _build/default/src/node/src/Hello.js
