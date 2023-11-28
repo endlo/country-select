@@ -1,5 +1,6 @@
 (library
  (name bindings)
+ (libraries reason-react)
  (modes melange)
  (preprocess
-  (pps melange.ppx)))
+  (pps melange.ppx reason-react-ppx)))
