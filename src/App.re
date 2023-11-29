@@ -1,21 +1,20 @@
 module Styles = {
-  open StyleUtils;
+  open Css;
 
   let container =
-    make(
-      ~alignItems="center",
-      ~display="flex",
-      ~flexDirection="column",
-      ~fontFamily="Arial",
-      (),
-    );
+    style([
+      alignItems(center),
+      display(flexBox),
+      flexDirection(column),
+      fontFamily(`custom("Arial")),
+    ]);
 };
 
 [@react.component]
 let make = () => {
   let (country, setSelectedCountry) = ReactIO.useState(() => None);
 
-  <main style=Styles.container>
+  <main className=Styles.container>
     <CountrySelect country onChange={Option.pure >> setSelectedCountry} />
   </main>;
 };

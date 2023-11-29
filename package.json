@@ -4,11 +4,14 @@
     "serve": "webpack serve --open --mode development --entry ./_build/default/src/output/src/Index.js"
   },
   "dependencies": {
+    "bs-css-emotion": "^1.2.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-select": "^5.8.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.10.0",
+    "jest": "^26.5.2",
     "webpack": "^5.73.0",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.9.1"
