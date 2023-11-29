@@ -1,13 +1,16 @@
+module Styles = {
+  open Css;
+
+  let select = style([minWidth(rem(15.0))]);
+};
+
 [@react.component]
 let make = (~className=?, ~country: option(string), ~onChange) =>
   <ReactSelect
     backspaceRemovesValue=false
-    ?className
+    className={className |> StyleUtils.extendBaseStyle(Styles.select)}
     controlShouldRenderValue=false
-    components=[
-      (DropdownIndicator, Some(_ => <div> "HAI"->React.string </div>)),
-      (IndicatorSeparator, None),
-    ]
+    components=[(DropdownIndicator, None), (IndicatorSeparator, None)]
     onChange
     options=[||]
     placeholder="Select Country..."
