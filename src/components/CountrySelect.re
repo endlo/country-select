@@ -1,5 +1,5 @@
 [@react.component]
-let make = (~className=?, ~country: option(Country.t), ~onChange) =>
+let make = (~className=?, ~country: option(string), ~onChange) =>
   <ReactSelect
     backspaceRemovesValue=false
     ?className
