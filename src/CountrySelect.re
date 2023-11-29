@@ -1,22 +1,17 @@
+open Relude.Globals;
+
 [@react.component]
 let make = () => {
-  let (selectedCountry, setSelectedCountry) = React.useState(() => None);
+  let (selectedCountry, setSelectedCountry) = ReactIO.useState(() => None);
 
-  // Each new country selection should override the previous, so lets shadow the set function
-  // and make it a little easier to use.
-  let setSelectedCountry = country => setSelectedCountry(_ => country);
-
-  <Bindings.ReactSelect
+  <ReactSelect
     backspaceRemovesValue=false
     controlShouldRenderValue=false
     components=[
-      {
-        key: DropdownIndicator,
-        value: Some(_ => <div> "HAI"->React.string </div>),
-      },
-      {key: IndicatorSeparator, value: None},
+      (DropdownIndicator, Some(_ => <div> "HAI"->React.string </div>)),
+      (IndicatorSeparator, None),
     ]
-    onChange={country => Some(country) |> setSelectedCountry}
+    onChange={Option.pure >> setSelectedCountry}
     options=[||]
     placeholder="Select Country..."
     tabSelectsValue=false

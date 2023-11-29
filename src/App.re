@@ -1,5 +1,5 @@
 module Styles = {
-  open Utils.Style;
+  open StyleUtils;
 
   let container =
     make(

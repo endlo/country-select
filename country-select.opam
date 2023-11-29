@@ -17,5 +17,10 @@ depends: [
   "ocaml-lsp-server" {with-test} # todo: use with-dev-setup once opam 2.2 is out
   "dot-merlin-reader" {with-test} # todo: use with-dev-setup once opam 2.2 is out
   "odoc" {with-doc}
+  "relude" {>= "2.0.0"}
 ]
 dev-repo: "git+https://github.com/your/project.git"
+pin-depends: [
+  [ "bastet.dev" "git+https://github.com/johnhaley81/bastet.git#6c8f53a9da55254691df49bddf96b279b38be204" ]
+  [ "relude.dev" "git+https://github.com/reazen/relude.git#v2" ]
+]

@@ -1,67 +1,62 @@
+open Relude.Globals;
+
 module Components = {
   type props;
 
-  module Key = {
-    type t =
-      | ClearIndicator
-      | Control
-      | DropdownIndicator
-      | DownChevron
-      | CrossIcon
-      | Group
-      | GroupHeading
-      | IndicatorsContainer
-      | IndicatorSeparator
-      | Input
-      | LoadingIndicator
-      | Menu
-      | MenuList
-      | MenuPortal
-      | LoadingMessage
-      | NoOptionsMessage
-      | MultiValue
-      | MultiValueContainer
-      | MultiValueLabel
-      | MultiValueRemove
-      | Option
-      | Placeholder
-      | SelectContainer
-      | SingleValue
-      | ValueContainer;
+  type t =
+    | ClearIndicator
+    | Control
+    | DropdownIndicator
+    | DownChevron
+    | CrossIcon
+    | Group
+    | GroupHeading
+    | IndicatorsContainer
+    | IndicatorSeparator
+    | Input
+    | LoadingIndicator
+    | Menu
+    | MenuList
+    | MenuPortal
+    | LoadingMessage
+    | NoOptionsMessage
+    | MultiValue
+    | MultiValueContainer
+    | MultiValueLabel
+    | MultiValueRemove
+    | Option
+    | Placeholder
+    | SelectContainer
+    | SingleValue
+    | ValueContainer;
 
-    let toString =
-      fun
-      | ClearIndicator => "ClearIndicator"
-      | Control => "Control"
-      | DropdownIndicator => "DropdownIndicator"
-      | DownChevron => "DownChevron"
-      | CrossIcon => "CrossIcon"
-      | Group => "Group"
-      | GroupHeading => "GroupHeading"
-      | IndicatorsContainer => "IndicatorsContainer"
-      | IndicatorSeparator => "IndicatorSeparator"
-      | Input => "Input"
-      | LoadingIndicator => "LoadingIndicator"
-      | Menu => "Menu"
-      | MenuList => "MenuList"
-      | MenuPortal => "MenuPortal"
-      | LoadingMessage => "LoadingMessage"
-      | NoOptionsMessage => "NoOptionsMessage"
-      | MultiValue => "MultiValue"
-      | MultiValueContainer => "MultiValueContainer"
-      | MultiValueLabel => "MultiValueLabel"
-      | MultiValueRemove => "MultiValueRemove"
-      | Option => "Option"
-      | Placeholder => "Placeholder"
-      | SelectContainer => "SelectContainer"
-      | SingleValue => "SingleValue"
-      | ValueContainer => "ValueContainer";
-  };
-
-  type t = {
-    key: Key.t,
-    value: option(props => React.element),
-  };
+  let toString =
+    fun
+    | ClearIndicator => "ClearIndicator"
+    | Control => "Control"
+    | DropdownIndicator => "DropdownIndicator"
+    | DownChevron => "DownChevron"
+    | CrossIcon => "CrossIcon"
+    | Group => "Group"
+    | GroupHeading => "GroupHeading"
+    | IndicatorsContainer => "IndicatorsContainer"
+    | IndicatorSeparator => "IndicatorSeparator"
+    | Input => "Input"
+    | LoadingIndicator => "LoadingIndicator"
+    | Menu => "Menu"
+    | MenuList => "MenuList"
+    | MenuPortal => "MenuPortal"
+    | LoadingMessage => "LoadingMessage"
+    | NoOptionsMessage => "NoOptionsMessage"
+    | MultiValue => "MultiValue"
+    | MultiValueContainer => "MultiValueContainer"
+    | MultiValueLabel => "MultiValueLabel"
+    | MultiValueRemove => "MultiValueRemove"
+    | Option => "Option"
+    | Placeholder => "Placeholder"
+    | SelectContainer => "SelectContainer"
+    | SingleValue => "SingleValue"
+    | ValueContainer => "ValueContainer";
 };
 
 type selectOption('a) = {
@@ -94,19 +89,24 @@ external make:
   React.element =
   "default";
 
-// Shadow the external make to add some additional type safety to the interface
-let makeProps = (~components: option(list(Components.t))=?) =>
+// Shadow the external make to add some additional type safety for things like components, as well as
+// wrap the onChange event in an IO chain.
+let makeProps =
+    (
+      ~components:
+         option(
+           list((Components.t, option(Components.props => React.element))),
+         )=?,
+      ~onChange: 'a => IO.t(unit, unit),
+    ) =>
   makeProps(
     ~components=?
       components
-      |> Option.map(components =>
-           components
-           |> List.map(({key, value}: Components.t) =>
-                (
-                  key |> Components.Key.toString,
-                  value |> Js.Nullable.fromOption,
-                )
-              )
-           |> Js.Dict.fromList
+      |> Option.map(
+           List.map(((key, value)) =>
+             (key |> Components.toString, value |> Js.Nullable.fromOption)
+           )
+           >> Js.Dict.fromList,
          ),
+    ~onChange=onChange >> IOUtils.unsafeRunHandledAsync,
   );
