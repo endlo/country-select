@@ -1,5 +1,3 @@
-open Relude.Globals;
-
 [@react.component]
 let make = () => {
   let (selectedCountry, setSelectedCountry) = ReactIO.useState(() => None);

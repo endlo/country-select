@@ -1,5 +1,3 @@
-open Relude.Globals;
-
 // Tweak the default React useState hook to do two things:
 // - Simplify the interface to remove access to the previous value (assume always overrite)
 // - Wrap the set function in an IO

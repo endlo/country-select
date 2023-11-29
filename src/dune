@@ -6,4 +6,5 @@
  (libraries reason-react relude)
  (preprocess
   (pps melange.ppx reason-react-ppx))
+ (compile_flags :standard -open Relude.Globals)
  (module_systems es6))

@@ -1,5 +1,3 @@
-open Relude.Globals;
-
 module Components = {
   type props;
 
