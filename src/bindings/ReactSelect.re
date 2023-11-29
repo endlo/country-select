@@ -87,8 +87,7 @@ external make:
   React.element =
   "default";
 
-// Shadow the external make to add some additional type safety for things like components, as well as
-// wrap the onChange event in an IO chain.
+// Shadow the external make to add some additional type safety as well as wrap the onChange event in an IO.
 let makeProps =
     (
       ~components:

@@ -12,4 +12,10 @@ module Styles = {
 };
 
 [@react.component]
-let make = () => <main style=Styles.container> <CountrySelect /> </main>;
+let make = () => {
+  let (country, setSelectedCountry) = ReactIO.useState(() => None);
+
+  <main style=Styles.container>
+    <CountrySelect country onChange={Option.pure >> setSelectedCountry} />
+  </main>;
+};
