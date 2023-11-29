@@ -57,11 +57,6 @@ module Components = {
     | ValueContainer => "ValueContainer";
 };
 
-type selectOption = {
-  label: string,
-  value: string,
-};
-
 [@mel.module "react-select"] [@react.component]
 external make:
   (
@@ -78,11 +73,11 @@ external make:
     ~isDisabled: bool=?,
     ~isSearchable: bool=?,
     ~menuIsOpen: bool=?,
-    ~onChange: string => unit,
-    ~options: array(selectOption),
+    ~onChange: 'a => unit,
+    ~options: array('a),
     ~placeholder: string=?,
     ~tabSelectsValue: bool=?,
-    ~value: string=?
+    ~value: 'a=?
   ) =>
   React.element =
   "default";
@@ -94,7 +89,7 @@ let makeProps =
          option(
            list((Components.t, option(Components.props => React.element))),
          )=?,
-      ~onChange: string => IO.t(unit, unit),
+      ~onChange: 'a => IO.t(unit, unit),
     ) =>
   makeProps(
     ~components=?

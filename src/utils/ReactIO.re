@@ -18,3 +18,9 @@ let useMappableState = intitalState => {
 
   (state, set);
 };
+
+let useMemo1 = (fn, memoizedProps) =>
+  memoizedProps |> Array.pure |> React.useMemo1(() => fn(memoizedProps));
+let useMemo2 = (fn, memoizedProps) =>
+  memoizedProps
+  |> React.useMemo2(() => memoizedProps |> Relude.Function.uncurry2(fn));

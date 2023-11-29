@@ -3,7 +3,7 @@
 (melange.emit
  (target output)
  (alias react)
- (libraries bs_css bs_css_emotion reason-react relude)
+ (libraries bs_css bs_css_emotion melange-fetch reason-react relude)
  (preprocess
   (pps melange.ppx reason-react-ppx))
  (compile_flags :standard -open Relude.Globals)
