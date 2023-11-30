@@ -1,11 +1,11 @@
 opam-version: "2.0"
-synopsis: "Melange project"
-description: "Minimal melange project"
-maintainer: ["<your_name>"]
-authors: ["<your_name>"]
+synopsis: "Country Select"
+description: "React app for simple country dropdown selection"
+maintainer: ["Jeremy Weidner"]
+authors: ["Jeremy Weidner"]
 license: "MIT"
-homepage: "https://github.com/your/project"
-bug-reports: "https://github.com/your/project/issues"
+homepage: "https://github.com/endlo/country-select"
+bug-reports: "https://github.com/endlo/country-select/issues"
 depends: [
   "ocaml" {>= "5.1.0"}
   "reason" {>= "3.10.0"}
@@ -20,7 +20,7 @@ depends: [
   "relude" {>= "2.0.0"}
   "melange-fetch" {>= "0.1.0"}
 ]
-dev-repo: "git+https://github.com/your/project.git"
+dev-repo: "git+https://github.com/endlo/country-select.git"
 pin-depends: [
   [ "bastet.dev" "git+https://github.com/johnhaley81/bastet.git#6c8f53a9da55254691df49bddf96b279b38be204" ]
   [ "relude.dev" "git+https://github.com/reazen/relude.git#v2" ]

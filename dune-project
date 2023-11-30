@@ -6,16 +6,16 @@
 
 (license "MIT")
 
-(maintainers <your_name>)
+(maintainers "Jeremy Weidner")
 
-(authors <your_name>)
+(authors "Jeremy Weidner")
 
-(homepage https://github.com/your/project)
+(homepage https://github.com/endlo/country-select)
 
-(bug_reports https://github.com/your/project/issues)
+(bug_reports https://github.com/endlo/country-select/issues)
 
 (package
  (allow_empty)
  (name country-select)
- (synopsis "Melange project")
- (description "Minimal melange project"))
+ (synopsis "Country Select")
+ (description "React app for simple country dropdown selection"))
