@@ -1,3 +1,5 @@
+const CopyPlugin = require("copy-webpack-plugin");
+
 module.exports = {
   module: {
     rules: [
@@ -9,5 +11,12 @@ module.exports = {
         ]
       },
     ],
-  }
+  },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: "public", to: "" },
+      ],
+    }),
+  ],
 };
