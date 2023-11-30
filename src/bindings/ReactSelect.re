@@ -133,6 +133,7 @@ external make:
     ~isSearchable: bool=?,
     ~menuIsOpen: bool=?,
     ~onChange: 'a => unit,
+    ~onKeyDown: ReactEvent.Keyboard.t => unit=?,
     ~options: array('a),
     ~placeholder: string=?,
     ~tabSelectsValue: bool=?,
@@ -147,6 +148,7 @@ let makeProps =
     (
       ~components: option(list(Components.t('a)))=?,
       ~onChange: 'a => IO.t(unit, unit),
+      ~onKeyDown: option(ReactEvent.Keyboard.t => IO.t(unit, unit))=?,
     ) =>
   makeProps(
     ~components=?
@@ -158,4 +160,6 @@ let makeProps =
            >> Js.Dict.fromList,
          ),
     ~onChange=onChange >> IOUtils.unsafeRunHandledAsync,
+    ~onKeyDown=?
+      onKeyDown |> Option.map(fn => fn >> IOUtils.unsafeRunHandledAsync),
   );

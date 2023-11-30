@@ -282,6 +282,14 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
         |> onChange
         |> IO.flatMap(() => setIsOpen(false))
       }
+      onKeyDown={
+        ReactEvent.Keyboard.key
+        >> (
+          fun
+          | "Escape" => setIsOpen(false)
+          | _ => IO.pure()
+        )
+      }
       options={countries |> AsyncResult.getOk |> Option.getOrElse([||])}
       placeholder="Search"
       tabSelectsValue=false
