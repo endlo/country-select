@@ -1,6 +1,6 @@
 // A subset of opaque type constructors that we built at Qwick to lean even more on the type system instead
-// of passing around basic data types. This was a boon to our velocity and comfortability in making deep
-// architechtural changes to a very large code base with very low effort.
+// of passing around basic data types. This was a boon to our velocity and enabled us to make deep architectural
+// changes and rely on the compiler to know when we had addressed everything that was affected.
 
 module type OpaqueString = {
   type t;

@@ -1,6 +1,9 @@
 module CommonStyles = {
   open Css;
 
+  // Ideally this would be set at a global level for the application, but given that this is the
+  // primary component of the assignment, I wanted to make sure this component could be lifted into
+  // another application and keep the text styles.
   let typography =
     style([
       color(rgba(51, 51, 51, 1.0)),

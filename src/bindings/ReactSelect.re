@@ -1,10 +1,14 @@
 module ClassNames = {
+  // https://react-select.com/styles#the-classnames-prop
+
   type state;
 
   type t = {menu: state => string};
 };
 
 module Components = {
+  // https://react-select.com/components
+
   type genericProps = {innerRef: Js.Nullable.t(ReactDOM.domRef)};
 
   type controlProps = {
