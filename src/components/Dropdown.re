@@ -45,7 +45,7 @@ module Menu = {
             rgba(0, 0, 0, 0.08),
           ),
         ]),
-        marginTop(rem(0.5)),
+        marginTop(rem(0.1875)),
         position(absolute),
         zIndex(2),
       ]);
