@@ -45,6 +45,10 @@ module Button = {
     <button
       className=Styles.button
       onClick={_ => setIsOpen(true) |> IOUtils.unsafeRunHandledAsync}>
+      {selectedCountry
+       |> Option.fold(React.null, country =>
+            <> <FlagIcon country /> <Spacer.Horizontal size=6 /> </>
+          )}
       <div className={Styles.title(~selectedCountry)}>
         {selectedCountry
          |> Option.fold(
@@ -72,6 +76,7 @@ module CountryOption = {
 
     let container = (~isFocused, ~isSelected) =>
       style([
+        alignItems(center),
         backgroundColor(
           switch (getInteractionState(~isFocused, ~isSelected)) {
           | Selected => rgba(255, 219, 179, 1.0)
@@ -94,7 +99,7 @@ module CountryOption = {
   let make =
     React.forwardRef(
       (
-        ~data as {count, label, _}: Country.t,
+        ~data as {count, label, _} as country: Country.t,
         ~innerProps,
         ~isFocused,
         ~isSelected,
@@ -106,12 +111,12 @@ module CountryOption = {
           ref=?{
             ref_ |> Js.Nullable.toOption |> Option.map(ReactDOM.Ref.domRef)
           }>
-          <div> "Poop"->React.string </div>
-          <Spacer.Horizontal size=6 />
+          <FlagIcon country />
+          <Spacer.Horizontal size=8 />
           <div className=Styles.text>
             {label |> Country.Label.toString |> React.string}
           </div>
-          <Spacer.Horizontal size=6 />
+          <Spacer.Horizontal size=8 />
           <div className=Styles.count>
             {count |> Int.toString |> React.string}
           </div>
@@ -125,11 +130,11 @@ module Styles = {
   open Css;
 
   let select =
-    merge([CommonStyles.typography, style([minWidth(rem(15.0))])]);
+    merge([CommonStyles.typography, style([maxWidth(rem(14.375))])]);
 
   let menu =
     style([
-      borderTop(rem(0.0625), solid, black),
+      borderTop(rem(0.0625), solid, rgba(0, 0, 0, 0.08)),
       important(position(inherit_)),
       paddingTop(rem(0.25)),
     ]);
