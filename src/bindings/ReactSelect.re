@@ -27,7 +27,6 @@ module Components = {
     label: string,
   };
 
-  [@deriving abstract]
   type t('data) = {
     [@mel.as "Control"]
     control: Js.Nullable.t(controlProps => React.element),
@@ -39,15 +38,13 @@ module Components = {
     option: Js.Nullable.t(optionProps('data) => React.element),
   };
 
-  // Add an improved make function here using the constructor that deriving abstract gave
-  // us and replace those pesky Js.Nullables with options.
-  let make = (~control, ~dropdownIndicator, ~indicatorSeparator, ~option) =>
-    t(
-      ~control=control |> Js.Nullable.fromOption,
-      ~dropdownIndicator=dropdownIndicator |> Js.Nullable.fromOption,
-      ~indicatorSeparator=indicatorSeparator |> Js.Nullable.fromOption,
-      ~option=option |> Js.Nullable.fromOption,
-    );
+  // Add a make function as a better interface to replace those pesky Js.Nullables with options.
+  let make = (~control, ~dropdownIndicator, ~indicatorSeparator, ~option) => {
+    control: control |> Js.Nullable.fromOption,
+    dropdownIndicator: dropdownIndicator |> Js.Nullable.fromOption,
+    indicatorSeparator: indicatorSeparator |> Js.Nullable.fromOption,
+    option: option |> Js.Nullable.fromOption,
+  };
 };
 
 [@mel.module "react-select"] [@react.component]

@@ -142,7 +142,12 @@ module CountryOption = {
 
     let text = style([flex(`num(1.0))]);
 
-    let count = style([color(rgba(0, 0, 0, 0.52))]);
+    let count =
+      style([
+        color(rgba(0, 0, 0, 0.52)),
+        fontSize(rem(0.75)),
+        lineHeight(rem(0.875)),
+      ]);
   };
 
   [@react.component]
@@ -210,6 +215,17 @@ module Styles = {
       important(position(inherit_)),
       paddingTop(rem(0.25)),
     ]);
+
+  let error =
+    merge([
+      CommonStyles.typography,
+      style([
+        backgroundColor(rgba(255, 0, 0, 0.1)),
+        borderRadius(rem(0.1875)),
+        color(red),
+        padding2(~h=rem(0.5), ~v=rem(0.25)),
+      ]),
+    ]);
 };
 
 let countriesSourceUrl = "https://gist.githubusercontent.com/rusty-key/659db3f4566df459bd59c8a53dc9f71f/raw/4127f9550ef063121c564025f6d27dceeb279623/counties.json";
@@ -247,6 +263,11 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
     setCountries(AsyncResult.loading)
     |> IO.flatMap(() => fetchCountries)
     |> IO.flatMap(AsyncResult.pure >> setCountries)
+    |> IO.catchError(() =>
+         "Error: could not fetch countries list"
+         |> AsyncResult.completeError
+         |> setCountries
+       )
     |> IOUtils.unsafeRunHandledAsync;
     None;
   });
@@ -261,43 +282,53 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
        )
     |> Option.flatten;
 
-  <Dropdown
-    isOpen
-    onClose={setIsOpen(false)}
-    target={<Button selectedCountry setIsOpen />}>
-    <ReactSelect
-      autoFocus=true
-      backspaceRemovesValue=false
-      className={className |> StyleUtils.extendBaseStyle(Styles.select)}
-      classNamePrefix="country-select"
-      classNames={menu: _state => Styles.menu}
-      controlShouldRenderValue=false
-      components={ReactSelect.Components.make(
-        ~control=Some(controlProps => <SearchBar controlProps />),
-        ~dropdownIndicator=None,
-        ~indicatorSeparator=None,
-        ~option=Some(optionProps => <CountryOption optionProps />),
-      )}
-      menuIsOpen=true
-      onChange={({value, _}: Country.t) =>
-        value
-        |> Country.Value.toString
-        |> onChange
-        |> IO.flatMap(() => setIsOpen(false))
-      }
-      onKeyDown={
-        ReactEvent.Keyboard.key
-        >> (
-          fun
-          | "Escape" => setIsOpen(false)
-          | _ => IO.pure()
-        )
-      }
-      options={countries |> AsyncResult.getOk |> Option.getOrElse([||])}
-      placeholder="Search"
-      tabSelectsValue=false
-      unstyled=true
-      value=?selectedCountry
-    />
-  </Dropdown>;
+  <>
+    <Dropdown
+      isOpen
+      onClose={setIsOpen(false)}
+      target={<Button selectedCountry setIsOpen />}>
+      <ReactSelect
+        autoFocus=true
+        backspaceRemovesValue=false
+        className={className |> StyleUtils.extendBaseStyle(Styles.select)}
+        classNamePrefix="country-select"
+        classNames={menu: _state => Styles.menu}
+        controlShouldRenderValue=false
+        components={ReactSelect.Components.make(
+          ~control=Some(controlProps => <SearchBar controlProps />),
+          ~dropdownIndicator=None,
+          ~indicatorSeparator=None,
+          ~option=Some(optionProps => <CountryOption optionProps />),
+        )}
+        menuIsOpen=true
+        onChange={({value, _}: Country.t) =>
+          value
+          |> Country.Value.toString
+          |> onChange
+          |> IO.flatMap(() => setIsOpen(false))
+        }
+        onKeyDown={
+          ReactEvent.Keyboard.key
+          >> (
+            fun
+            | "Escape" => setIsOpen(false)
+            | _ => IO.pure()
+          )
+        }
+        options={countries |> AsyncResult.getOk |> Option.getOrElse([||])}
+        placeholder="Search"
+        tabSelectsValue=false
+        unstyled=true
+        value=?selectedCountry
+      />
+    </Dropdown>
+    {countries
+     |> AsyncResult.getError
+     |> Option.fold(React.null, errorMessage =>
+          <>
+            <Spacer.Vertical size=8 />
+            <div className=Styles.error> {errorMessage |> React.string} </div>
+          </>
+        )}
+  </>;
 };
