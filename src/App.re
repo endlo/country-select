@@ -1,19 +1,20 @@
 module Styles = {
   open Css;
 
-  let screen =
-    style([alignItems(center), display(flexBox), flexDirection(column)]);
-
-  let container = style([width(pct(35.0))]);
+  let main =
+    style([
+      alignItems(center),
+      display(flexBox),
+      flexDirection(column),
+      padding2(~h=rem(1.0), ~v=rem(10.0)),
+    ]);
 };
 
 [@react.component]
 let make = () => {
   let (country, setCountry) = ReactIO.useState(() => None);
 
-  <main className=Styles.screen>
-    <div className=Styles.container>
-      <CountrySelect country onChange={Option.pure >> setCountry} />
-    </div>
+  <main className=Styles.main>
+    <CountrySelect country onChange={Option.pure >> setCountry} />
   </main>;
 };

@@ -28,7 +28,7 @@ module Menu = {
     let container =
       style([
         backgroundColor(white),
-        borderRadius(px(3)),
+        borderRadius(px(2)),
         boxShadows([
           Shadow.box(
             ~x=zero,
