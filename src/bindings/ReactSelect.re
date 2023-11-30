@@ -10,6 +10,12 @@ module Components = {
   type genericProps = {innerRef: Js.Nullable.t(ReactDOM.domRef)};
   type genericComponent = option(genericProps => React.element);
 
+  type controlProps = {
+    children: React.element,
+    innerProps: Js.t({.}),
+  };
+  type controlComponent = option(controlProps => React.element);
+
   type optionProps('data) = {
     children: React.element,
     data: 'data,
@@ -24,7 +30,7 @@ module Components = {
 
   type t('data) =
     | ClearIndicator(genericComponent)
-    | Control(genericComponent)
+    | Control(controlComponent)
     | DropdownIndicator(genericComponent)
     | DownChevron(genericComponent)
     | CrossIcon(genericComponent)
@@ -81,8 +87,9 @@ module Components = {
     fun
     | Option(optionComponent) =>
       optionComponent |> Js.Nullable.fromOption |> Relude.Unsafe.coerce
+    | Control(controlComponent) =>
+      controlComponent |> Js.Nullable.fromOption |> Relude.Unsafe.coerce
     | ClearIndicator(genericComponent)
-    | Control(genericComponent)
     | DropdownIndicator(genericComponent)
     | DownChevron(genericComponent)
     | CrossIcon(genericComponent)

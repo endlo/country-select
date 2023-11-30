@@ -44,15 +44,17 @@ module Button = {
   let make = (~selectedCountry, ~setIsOpen) =>
     <button
       className=Styles.button
-      onClick={_ => setIsOpen(true) |> IOUtils.unsafeRunHandledAsync}>
+      onClick={_ => setIsOpen(true) |> IOUtils.unsafeRunHandledAsync}
+      tabIndex=0
+      type_="button">
       {selectedCountry
        |> Option.fold(React.null, country =>
-            <> <FlagIcon country /> <Spacer.Horizontal size=6 /> </>
+            <> <FlagIcon country /> <Spacer.Horizontal size=8 /> </>
           )}
       <div className={Styles.title(~selectedCountry)}>
         {selectedCountry
          |> Option.fold(
-              "Select Country...", ({count: _, label, value: _}: Country.t) =>
+              "Select Country", ({count: _, label, value: _}: Country.t) =>
               label |> Country.Label.toString
             )
          |> React.string}
@@ -60,6 +62,39 @@ module Button = {
       <Spacer.Horizontal size=6 />
       <Icon.DropdownArrow />
     </button>;
+};
+
+module SearchBar = {
+  module Styles = {
+    open Css;
+
+    let container =
+      style([
+        alignItems(center),
+        display(flexBox),
+        flexDirection(row),
+        flexWrap(nowrap),
+        padding2(~h=rem(0.625), ~v=rem(0.5)),
+      ]);
+
+    let searchIcon =
+      style([flexShrink(0.0), height(rem(0.875)), width(rem(0.875))]);
+  };
+
+  [@react.component]
+  let make =
+      (
+        ~controlProps as
+          {children, innerProps}: ReactSelect.Components.controlProps,
+      ) =>
+    React.cloneElement(
+      <div className=Styles.container>
+        <div className=Styles.searchIcon> <Icon.Search /> </div>
+        <Spacer.Horizontal size=8 />
+        children
+      </div>,
+      innerProps,
+    );
 };
 
 module CountryOption = {
@@ -155,7 +190,16 @@ module Styles = {
   open Css;
 
   let select =
-    merge([CommonStyles.typography, style([maxWidth(rem(14.375))])]);
+    merge([
+      CommonStyles.typography,
+      style([
+        width(rem(14.375)),
+        selector(
+          ".country-select__placeholder",
+          [color(rgba(0, 0, 0, 0.32))],
+        ),
+      ]),
+    ]);
 
   let menu =
     style([
@@ -222,9 +266,11 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
       autoFocus=true
       backspaceRemovesValue=false
       className={className |> StyleUtils.extendBaseStyle(Styles.select)}
+      classNamePrefix="country-select"
       classNames={menu: _state => Styles.menu}
       controlShouldRenderValue=false
       components=[
+        Control(Some(controlProps => <SearchBar controlProps />)),
         DropdownIndicator(None),
         IndicatorSeparator(None),
         Option(Some(optionProps => <CountryOption optionProps />)),
@@ -237,7 +283,7 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
         |> IO.flatMap(() => setIsOpen(false))
       }
       options={countries |> AsyncResult.getOk |> Option.getOrElse([||])}
-      placeholder="Search..."
+      placeholder="Search"
       tabSelectsValue=false
       unstyled=true
       value=?selectedCountry
