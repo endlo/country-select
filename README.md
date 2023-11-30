@@ -1,9 +1,7 @@
 # country-select
 
-A simple project template using [Melange](https://github.com/melange-re/melange)
+A simple project to select countries from a dropdown using [Melange](https://github.com/melange-re/melange)
 with [opam](https://opam.ocaml.org/).
-
-If you are looking for a template with esy, check [melange-esy-template](https://github.com/melange-re/melange-esy-template).
 
 ## Quick Start
 
@@ -48,25 +46,17 @@ change
 
 ## JavaScript output
 
-Since Melange compiles source files into JavaScript files, it can be used
+Melange compiles source files into JavaScript files. This means it can be used
 for projects on any JavaScript platform - not just the browser.
 
-The template includes two `melange.emit` stanza for two separate apps. This
-stanza tells Dune to generate JavaScript files using Melange, and specifies in
-which folder the JavaScript files should be placed, by leveraging the `target`
-field:
-- The React app JavaScript files will be placed in `_build/default/src/output/*`.
-- The NodeJS app JavaScript files will be placed in `_build/default/src/node/*`.
+The project includes a `melange.emit` stanza for a React app. This stanza tells
+Dune to generate JavaScript files using Melange, and specifies in which folder
+the JavaScript files should be placed, by leveraging the `target` field.
 
-So for example, [`src/Hello.ml`](src/Hello.ml) (using OCaml syntax) can be run with
-`node`:
+We can find the JavaScript files for the React app in `_build/default/src/output/*`.
 
-```bash
-node _build/default/src/node/src/Hello.js
-```
-
-Similarly, `_build/default/src/output/src/ReactApp.js` can be passed as entry to a bundler
-like Webpack:
+To host this React app, `_build/default/src/output/src/ReactApp.js` can be passed as
+entry to a bundler like Webpack:
 
 ```bash
 webpack --mode production --entry ./_build/default/src/output/src/ReactApp.js
