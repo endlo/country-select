@@ -3,6 +3,7 @@ module CommonStyles = {
 
   let typography =
     style([
+      color(rgba(51, 51, 51, 1.0)),
       fontFamily(`custom("Arial")),
       fontSize(px(14)),
       fontWeight(normal),
@@ -18,12 +19,24 @@ module Button = {
       merge([
         CommonStyles.typography,
         style([
+          alignItems(center),
           backgroundColor(white),
-          border(rem(0.0625), solid, gray),
-          borderRadius(px(4)),
-          padding2(~h=rem(0.5), ~v=rem(0.25)),
+          border(rem(0.0625), solid, rgba(0, 0, 0, 0.2)),
+          borderRadius(px(3)),
+          display(flexBox),
+          flexDirection(row),
+          flexWrap(nowrap),
+          padding2(~h=rem(0.625), ~v=rem(0.25)),
           textAlign(`left),
         ]),
+      ]);
+
+    let title = (~selectedCountry) =>
+      style([
+        color(
+          selectedCountry |> Option.isSome
+            ? currentColor : rgba(0, 0, 0, 0.32),
+        ),
       ]);
   };
 
@@ -32,12 +45,16 @@ module Button = {
     <button
       className=Styles.button
       onClick={_ => setIsOpen(true) |> IOUtils.unsafeRunHandledAsync}>
-      {selectedCountry
-       |> Option.fold(
-            "Select Country...", ({count: _, label, value: _}: Country.t) =>
-            label |> Country.Label.toString
-          )
-       |> React.string}
+      <div className={Styles.title(~selectedCountry)}>
+        {selectedCountry
+         |> Option.fold(
+              "Select Country...", ({count: _, label, value: _}: Country.t) =>
+              label |> Country.Label.toString
+            )
+         |> React.string}
+      </div>
+      <Spacer.Horizontal size=6 />
+      <Icon.DropdownArrow />
     </button>;
 };
 
@@ -59,16 +76,16 @@ module CountryOption = {
           switch (getInteractionState(~isFocused, ~isSelected)) {
           | Selected => rgba(255, 219, 179, 1.0)
           | Focused => rgba(255, 219, 179, 0.25)
-          | Blurred => white
+          | Blurred => transparent
           },
         ),
         display(flexBox),
         flexDirection(row),
         flexWrap(nowrap),
-        padding(rem(0.25)),
+        padding2(~h=rem(0.625), ~v=rem(0.25)),
       ]);
 
-    let text = style([flex(`num(1.0)), padding2(~h=rem(0.25), ~v=zero)]);
+    let text = style([flex(`num(1.0))]);
 
     let count = style([color(rgba(0, 0, 0, 0.52))]);
   };
@@ -90,9 +107,11 @@ module CountryOption = {
             ref_ |> Js.Nullable.toOption |> Option.map(ReactDOM.Ref.domRef)
           }>
           <div> "Poop"->React.string </div>
+          <Spacer.Horizontal size=6 />
           <div className=Styles.text>
             {label |> Country.Label.toString |> React.string}
           </div>
+          <Spacer.Horizontal size=6 />
           <div className=Styles.count>
             {count |> Int.toString |> React.string}
           </div>
@@ -107,6 +126,13 @@ module Styles = {
 
   let select =
     merge([CommonStyles.typography, style([minWidth(rem(15.0))])]);
+
+  let menu =
+    style([
+      borderTop(rem(0.0625), solid, black),
+      important(position(inherit_)),
+      paddingTop(rem(0.25)),
+    ]);
 };
 
 let countriesSourceUrl = "https://gist.githubusercontent.com/rusty-key/659db3f4566df459bd59c8a53dc9f71f/raw/4127f9550ef063121c564025f6d27dceeb279623/counties.json";
@@ -153,6 +179,7 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
       autoFocus=true
       backspaceRemovesValue=false
       className={className |> StyleUtils.extendBaseStyle(Styles.select)}
+      classNames={menu: _state => Styles.menu}
       controlShouldRenderValue=false
       components=[
         DropdownIndicator(None),
@@ -183,6 +210,7 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
       options={countries |> AsyncResult.getOk |> Option.getOrElse([||])}
       placeholder="Search..."
       tabSelectsValue=false
+      unstyled=true
       value=?selectedCountry
     />
   </Dropdown>;

@@ -1,3 +1,9 @@
+module ClassNames = {
+  type state;
+
+  type t = {menu: state => string};
+};
+
 module Components = {
   type props;
 
@@ -109,6 +115,7 @@ external make:
     ~backspaceRemovesValue: bool=?,
     ~className: string=?,
     ~classNamePrefix: string=?,
+    ~classNames: ClassNames.t=?,
     ~components: Js.Dict.t(Js.Nullable.t(Components.props => React.element))
                    =?,
     ~controlShouldRenderValue: bool=?,
@@ -122,6 +129,7 @@ external make:
     ~options: array('a),
     ~placeholder: string=?,
     ~tabSelectsValue: bool=?,
+    ~unstyled: bool=?,
     ~value: 'a=?
   ) =>
   React.element =
