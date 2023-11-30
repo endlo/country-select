@@ -63,6 +63,18 @@ module Button = {
 };
 
 module CountryOption = {
+  module EmptyFlag = {
+    module Styles = {
+      open Css;
+
+      let container =
+        style([flexShrink(0.0), height(rem(0.875)), width(rem(0.875))]);
+    };
+
+    [@react.component]
+    let make = () => <div className=Styles.container />;
+  };
+
   module Styles = {
     open Css;
 
@@ -104,26 +116,37 @@ module CountryOption = {
         ~isFocused,
         ~isSelected,
         ref_,
-      ) =>
-      React.cloneElement(
-        <div
-          className={Styles.container(~isFocused, ~isSelected)}
-          ref=?{
-            ref_ |> Js.Nullable.toOption |> Option.map(ReactDOM.Ref.domRef)
-          }>
-          <FlagIcon country />
-          <Spacer.Horizontal size=8 />
-          <div className=Styles.text>
-            {label |> Country.Label.toString |> React.string}
-          </div>
-          <Spacer.Horizontal size=8 />
-          <div className=Styles.count>
-            {count |> Int.toString |> React.string}
-          </div>
-        </div>,
-        innerProps,
-      )
-    );
+      ) => {
+      // To improve performance of the menu due to loading all of the flag SVGs at once upon first
+      // menu open, we're going to keep track of the first time the component appears in the viewport
+      // to actually trigger the flag icon to load. We're only going to do this once as the flag will
+      // be cached once loaded and can be called up at any point the user scrolls through the list.
+      let (hasAppearedInViewport, setHasAppearedInViewport) =
+        ReactIO.useMappableState(() => false);
+      let setHasAppearedInViewport = newValue =>
+        setHasAppearedInViewport(oldValue => oldValue || newValue);
+
+      <ReactVisibilitySensor onChange=setHasAppearedInViewport>
+        {React.cloneElement(
+           <div
+             className={Styles.container(~isFocused, ~isSelected)}
+             ref=?{
+               ref_ |> Js.Nullable.toOption |> Option.map(ReactDOM.Ref.domRef)
+             }>
+             {hasAppearedInViewport ? <FlagIcon country /> : <EmptyFlag />}
+             <Spacer.Horizontal size=8 />
+             <div className=Styles.text>
+               {label |> Country.Label.toString |> React.string}
+             </div>
+             <Spacer.Horizontal size=8 />
+             <div className=Styles.count>
+               {count |> Int.toString |> React.string}
+             </div>
+           </div>,
+           innerProps,
+         )}
+      </ReactVisibilitySensor>;
+    });
 };
 
 module Styles = {
