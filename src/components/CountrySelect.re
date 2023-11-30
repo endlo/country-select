@@ -8,9 +8,9 @@ module CommonStyles = {
     style([
       color(rgba(51, 51, 51, 1.0)),
       fontFamily(`custom("Arial")),
-      fontSize(px(14)),
+      fontSize(rem(0.875)),
       fontWeight(normal),
-      lineHeight(px(18)),
+      lineHeight(rem(1.125)),
     ]);
 };
 
@@ -25,7 +25,7 @@ module Button = {
           alignItems(center),
           backgroundColor(white),
           border(rem(0.0625), solid, rgba(0, 0, 0, 0.2)),
-          borderRadius(px(3)),
+          borderRadius(rem(0.1875)),
           display(flexBox),
           flexDirection(row),
           flexWrap(nowrap),

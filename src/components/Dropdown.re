@@ -28,12 +28,12 @@ module Menu = {
     let container =
       style([
         backgroundColor(white),
-        borderRadius(px(2)),
+        borderRadius(rem(0.125)),
         boxShadows([
           Shadow.box(
             ~x=zero,
-            ~y=px(3),
-            ~blur=px(18),
+            ~y=rem(0.1875),
+            ~blur=rem(1.125),
             ~spread=zero,
             rgba(0, 0, 0, 0.15),
           ),
@@ -41,7 +41,7 @@ module Menu = {
             ~x=zero,
             ~y=zero,
             ~blur=zero,
-            ~spread=px(1),
+            ~spread=rem(0.0625),
             rgba(0, 0, 0, 0.08),
           ),
         ]),
