@@ -1,7 +1,112 @@
+module CommonStyles = {
+  open Css;
+
+  let typography =
+    style([
+      fontFamily(`custom("Arial")),
+      fontSize(px(14)),
+      fontWeight(normal),
+      lineHeight(px(18)),
+    ]);
+};
+
+module Button = {
+  module Styles = {
+    open Css;
+
+    let button =
+      merge([
+        CommonStyles.typography,
+        style([
+          backgroundColor(white),
+          border(rem(0.0625), solid, gray),
+          borderRadius(px(4)),
+          padding2(~h=rem(0.5), ~v=rem(0.25)),
+          textAlign(`left),
+        ]),
+      ]);
+  };
+
+  [@react.component]
+  let make = (~selectedCountry, ~setIsOpen) =>
+    <button
+      className=Styles.button
+      onClick={_ => setIsOpen(true) |> IOUtils.unsafeRunHandledAsync}>
+      {selectedCountry
+       |> Option.fold(
+            "Select Country...", ({count: _, label, value: _}: Country.t) =>
+            label |> Country.Label.toString
+          )
+       |> React.string}
+    </button>;
+};
+
+module CountryOption = {
+  module Styles = {
+    open Css;
+
+    type interactionState =
+      | Selected
+      | Focused
+      | Blurred;
+
+    let getInteractionState = (~isFocused, ~isSelected) =>
+      isSelected ? Selected : isFocused ? Focused : Blurred;
+
+    let container = (~isFocused, ~isSelected) =>
+      style([
+        backgroundColor(
+          switch (getInteractionState(~isFocused, ~isSelected)) {
+          | Selected => rgba(255, 219, 179, 1.0)
+          | Focused => rgba(255, 219, 179, 0.25)
+          | Blurred => white
+          },
+        ),
+        display(flexBox),
+        flexDirection(row),
+        flexWrap(nowrap),
+        padding(rem(0.25)),
+      ]);
+
+    let text = style([flex(`num(1.0)), padding2(~h=rem(0.25), ~v=zero)]);
+
+    let count = style([color(rgba(0, 0, 0, 0.52))]);
+  };
+
+  [@react.component]
+  let make =
+    React.forwardRef(
+      (
+        ~data as {count, label, _}: Country.t,
+        ~innerProps,
+        ~isFocused,
+        ~isSelected,
+        ref_,
+      ) =>
+      React.cloneElement(
+        <div
+          className={Styles.container(~isFocused, ~isSelected)}
+          ref=?{
+            ref_ |> Js.Nullable.toOption |> Option.map(ReactDOM.Ref.domRef)
+          }>
+          <div> "Poop"->React.string </div>
+          <div className=Styles.text>
+            {label |> Country.Label.toString |> React.string}
+          </div>
+          <div className=Styles.count>
+            {count |> Int.toString |> React.string}
+          </div>
+        </div>,
+        innerProps,
+      )
+    );
+};
+
 module Styles = {
   open Css;
 
-  let select = style([minWidth(rem(15.0))]);
+  let select =
+    merge([CommonStyles.typography, style([minWidth(rem(15.0))])]);
 };
 
 let countriesSourceUrl = "https://gist.githubusercontent.com/rusty-key/659db3f4566df459bd59c8a53dc9f71f/raw/4127f9550ef063121c564025f6d27dceeb279623/counties.json";
@@ -34,7 +139,7 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
     (countries |> AsyncResult.getOk, country)
     |> Option.mapTuple2((countries, selectedCountry) =>
          countries
-         |> Array.find(({label: _, value}: Country.t) =>
+         |> Array.find(({value, _}: Country.t) =>
               value |> Country.Value.toString |> String.eq(selectedCountry)
             )
        )
@@ -43,19 +148,33 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
   <Dropdown
     isOpen
     onClose={setIsOpen(false)}
-    target={
-      <button onClick={_ => setIsOpen(true) |> IOUtils.unsafeRunHandledAsync}>
-        {country |> Option.getOrElse("Select Country...") |> React.string}
-      </button>
-    }>
+    target={<Button selectedCountry setIsOpen />}>
     <ReactSelect
       autoFocus=true
       backspaceRemovesValue=false
       className={className |> StyleUtils.extendBaseStyle(Styles.select)}
       controlShouldRenderValue=false
-      components=[(DropdownIndicator, None), (IndicatorSeparator, None)]
+      components=[
+        DropdownIndicator(None),
+        IndicatorSeparator(None),
+        Option(
+          Some(
+            (
+              {data, innerProps, innerRef, isFocused, isSelected, _}:
+                ReactSelect.Components.optionProps(Country.t),
+            ) =>
+              <CountryOption
+                data
+                innerProps
+                isFocused
+                isSelected
+                ref=innerRef
+              />,
+          ),
+        ),
+      ]
       menuIsOpen=true
-      onChange={({label: _, value}: Country.t) =>
+      onChange={({value, _}: Country.t) =>
         value
         |> Country.Value.toString
         |> onChange

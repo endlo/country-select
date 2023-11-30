@@ -14,6 +14,7 @@ module Value = {
 };
 
 type t = {
+  count: int,
   label: Label.t,
   value: Value.t,
 };
@@ -29,5 +30,11 @@ let decode =
          |> Option.flatMap(Js.Json.decodeString)
          |> Option.flatMap(Value.fromString),
        )
-       |> Option.mapTuple2((label, value) => {label, value})
+       |> Option.mapTuple2((label, value) =>
+            {
+              count: 0, // While unavailable in the current data, adding here for future support
+              label,
+              value,
+            }
+          )
      );

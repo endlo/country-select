@@ -2,12 +2,7 @@ module Styles = {
   open Css;
 
   let container =
-    style([
-      alignItems(center),
-      display(flexBox),
-      flexDirection(column),
-      fontFamily(`custom("Arial")),
-    ]);
+    style([alignItems(center), display(flexBox), flexDirection(column)]);
 };
 
 [@react.component]

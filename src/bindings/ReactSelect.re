@@ -1,60 +1,105 @@
 module Components = {
   type props;
 
-  type t =
-    | ClearIndicator
-    | Control
-    | DropdownIndicator
-    | DownChevron
-    | CrossIcon
-    | Group
-    | GroupHeading
-    | IndicatorsContainer
-    | IndicatorSeparator
-    | Input
-    | LoadingIndicator
-    | Menu
-    | MenuList
-    | MenuPortal
-    | LoadingMessage
-    | NoOptionsMessage
-    | MultiValue
-    | MultiValueContainer
-    | MultiValueLabel
-    | MultiValueRemove
-    | Option
-    | Placeholder
-    | SelectContainer
-    | SingleValue
-    | ValueContainer;
+  type genericProps = {innerRef: Js.Nullable.t(ReactDOM.domRef)};
+  type genericComponent = option(genericProps => React.element);
 
-  let toString =
+  type optionProps('data) = {
+    children: React.element,
+    data: 'data,
+    innerProps: Js.t({.}),
+    innerRef: Js.Nullable.t(ReactDOM.domRef),
+    isDisabled: bool,
+    isFocused: bool,
+    isSelected: bool,
+    label: string,
+  };
+  type optionComponent('data) = option(optionProps('data) => React.element);
+
+  type t('data) =
+    | ClearIndicator(genericComponent)
+    | Control(genericComponent)
+    | DropdownIndicator(genericComponent)
+    | DownChevron(genericComponent)
+    | CrossIcon(genericComponent)
+    | Group(genericComponent)
+    | GroupHeading(genericComponent)
+    | IndicatorsContainer(genericComponent)
+    | IndicatorSeparator(genericComponent)
+    | Input(genericComponent)
+    | LoadingIndicator(genericComponent)
+    | Menu(genericComponent)
+    | MenuList(genericComponent)
+    | MenuPortal(genericComponent)
+    | LoadingMessage(genericComponent)
+    | NoOptionsMessage(genericComponent)
+    | MultiValue(genericComponent)
+    | MultiValueContainer(genericComponent)
+    | MultiValueLabel(genericComponent)
+    | MultiValueRemove(genericComponent)
+    | Option(optionComponent('data))
+    | Placeholder(genericComponent)
+    | SelectContainer(genericComponent)
+    | SingleValue(genericComponent)
+    | ValueContainer(genericComponent);
+
+  let toKey =
     fun
-    | ClearIndicator => "ClearIndicator"
-    | Control => "Control"
-    | DropdownIndicator => "DropdownIndicator"
-    | DownChevron => "DownChevron"
-    | CrossIcon => "CrossIcon"
-    | Group => "Group"
-    | GroupHeading => "GroupHeading"
-    | IndicatorsContainer => "IndicatorsContainer"
-    | IndicatorSeparator => "IndicatorSeparator"
-    | Input => "Input"
-    | LoadingIndicator => "LoadingIndicator"
-    | Menu => "Menu"
-    | MenuList => "MenuList"
-    | MenuPortal => "MenuPortal"
-    | LoadingMessage => "LoadingMessage"
-    | NoOptionsMessage => "NoOptionsMessage"
-    | MultiValue => "MultiValue"
-    | MultiValueContainer => "MultiValueContainer"
-    | MultiValueLabel => "MultiValueLabel"
-    | MultiValueRemove => "MultiValueRemove"
-    | Option => "Option"
-    | Placeholder => "Placeholder"
-    | SelectContainer => "SelectContainer"
-    | SingleValue => "SingleValue"
-    | ValueContainer => "ValueContainer";
+    | ClearIndicator(_) => "ClearIndicator"
+    | Control(_) => "Control"
+    | DropdownIndicator(_) => "DropdownIndicator"
+    | DownChevron(_) => "DownChevron"
+    | CrossIcon(_) => "CrossIcon"
+    | Group(_) => "Group"
+    | GroupHeading(_) => "GroupHeading"
+    | IndicatorsContainer(_) => "IndicatorsContainer"
+    | IndicatorSeparator(_) => "IndicatorSeparator"
+    | Input(_) => "Input"
+    | LoadingIndicator(_) => "LoadingIndicator"
+    | Menu(_) => "Menu"
+    | MenuList(_) => "MenuList"
+    | MenuPortal(_) => "MenuPortal"
+    | LoadingMessage(_) => "LoadingMessage"
+    | NoOptionsMessage(_) => "NoOptionsMessage"
+    | MultiValue(_) => "MultiValue"
+    | MultiValueContainer(_) => "MultiValueContainer"
+    | MultiValueLabel(_) => "MultiValueLabel"
+    | MultiValueRemove(_) => "MultiValueRemove"
+    | Option(_) => "Option"
+    | Placeholder(_) => "Placeholder"
+    | SelectContainer(_) => "SelectContainer"
+    | SingleValue(_) => "SingleValue"
+    | ValueContainer(_) => "ValueContainer";
+
+  let toValue: t('data) => Js.Nullable.t(props => React.element) =
+    fun
+    | Option(optionComponent) =>
+      optionComponent |> Js.Nullable.fromOption |> Relude.Unsafe.coerce
+    | ClearIndicator(genericComponent)
+    | Control(genericComponent)
+    | DropdownIndicator(genericComponent)
+    | DownChevron(genericComponent)
+    | CrossIcon(genericComponent)
+    | Group(genericComponent)
+    | GroupHeading(genericComponent)
+    | IndicatorsContainer(genericComponent)
+    | IndicatorSeparator(genericComponent)
+    | Input(genericComponent)
+    | LoadingIndicator(genericComponent)
+    | Menu(genericComponent)
+    | MenuList(genericComponent)
+    | MenuPortal(genericComponent)
+    | LoadingMessage(genericComponent)
+    | NoOptionsMessage(genericComponent)
+    | MultiValue(genericComponent)
+    | MultiValueContainer(genericComponent)
+    | MultiValueLabel(genericComponent)
+    | MultiValueRemove(genericComponent)
+    | Placeholder(genericComponent)
+    | SelectContainer(genericComponent)
+    | SingleValue(genericComponent)
+    | ValueContainer(genericComponent) =>
+      genericComponent |> Js.Nullable.fromOption |> Relude.Unsafe.coerce;
 };
 
 [@mel.module "react-select"] [@react.component]
@@ -85,18 +130,15 @@ external make:
 // Shadow the external make to add some additional type safety as well as wrap the onChange event in an IO.
 let makeProps =
     (
-      ~components:
-         option(
-           list((Components.t, option(Components.props => React.element))),
-         )=?,
+      ~components: option(list(Components.t('a)))=?,
       ~onChange: 'a => IO.t(unit, unit),
     ) =>
   makeProps(
     ~components=?
       components
       |> Option.map(
-           List.map(((key, value)) =>
-             (key |> Components.toString, value |> Js.Nullable.fromOption)
+           List.map(component =>
+             (component |> Components.toKey, component |> Components.toValue)
            )
            >> Js.Dict.fromList,
          ),
