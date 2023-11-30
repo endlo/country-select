@@ -269,12 +269,12 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
       classNamePrefix="country-select"
       classNames={menu: _state => Styles.menu}
       controlShouldRenderValue=false
-      components=[
-        Control(Some(controlProps => <SearchBar controlProps />)),
-        DropdownIndicator(None),
-        IndicatorSeparator(None),
-        Option(Some(optionProps => <CountryOption optionProps />)),
-      ]
+      components={ReactSelect.Components.make(
+        ~control=Some(controlProps => <SearchBar controlProps />),
+        ~dropdownIndicator=None,
+        ~indicatorSeparator=None,
+        ~option=Some(optionProps => <CountryOption optionProps />),
+      )}
       menuIsOpen=true
       onChange={({value, _}: Country.t) =>
         value
