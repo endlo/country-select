@@ -1,5 +1,5 @@
 module Styles = {
-  open Css;
+  open DesignSystem;
 
   let main =
     style([

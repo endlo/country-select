@@ -1,6 +1,6 @@
 module Blanket = {
   module Styles = {
-    open Css;
+    open DesignSystem;
 
     let container =
       style([
@@ -23,11 +23,11 @@ module Blanket = {
 
 module Menu = {
   module Styles = {
-    open Css;
+    open DesignSystem;
 
     let container =
       style([
-        backgroundColor(white),
+        backgroundColor(Light(Background(Box))),
         borderRadius(rem(0.125)),
         boxShadows([
           Shadow.box(
@@ -56,7 +56,7 @@ module Menu = {
 };
 
 module Styles = {
-  open Css;
+  open DesignSystem;
 
   let container = style([position(relative)]);
 };

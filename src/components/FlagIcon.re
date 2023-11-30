@@ -1,7 +1,7 @@
 [%%mel.raw {|import "/node_modules/flag-icons/css/flag-icons.min.css";|}];
 
 module Styles = {
-  open Css;
+  open DesignSystem;
 
   let inline = "fi";
 

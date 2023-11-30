@@ -1,31 +1,16 @@
-module CommonStyles = {
-  open Css;
-
-  // Ideally this would be set at a global level for the application, but given that this is the
-  // primary component of the assignment, I wanted to make sure this component could be lifted into
-  // another application and keep the text styles.
-  let typography =
-    style([
-      color(rgba(51, 51, 51, 1.0)),
-      fontFamily(`custom("Arial")),
-      fontSize(rem(0.875)),
-      fontWeight(normal),
-      lineHeight(rem(1.125)),
-    ]);
-};
-
 module Button = {
   module Styles = {
-    open Css;
+    open DesignSystem;
 
     let button =
       merge([
-        CommonStyles.typography,
+        typography(Text(Medium)),
         style([
           alignItems(center),
-          backgroundColor(white),
-          border(rem(0.0625), solid, rgba(0, 0, 0, 0.2)),
+          backgroundColor(Light(Background(Box))),
+          border(rem(0.0625), solid, Light(Border(ControlAlpha))),
           borderRadius(rem(0.1875)),
+          color(Light(Text(Primary))),
           display(flexBox),
           flexDirection(row),
           flexWrap(nowrap),
@@ -38,7 +23,7 @@ module Button = {
       style([
         color(
           selectedCountry |> Option.isSome
-            ? currentColor : rgba(0, 0, 0, 0.32),
+            ? CurrentColor : Light(Text(Tertiary)),
         ),
       ]);
   };
@@ -69,7 +54,7 @@ module Button = {
 
 module SearchBar = {
   module Styles = {
-    open Css;
+    open DesignSystem;
 
     let container =
       style([
@@ -103,7 +88,7 @@ module SearchBar = {
 module CountryOption = {
   module EmptyFlag = {
     module Styles = {
-      open Css;
+      open DesignSystem;
 
       let container =
         style([flexShrink(0.0), height(rem(0.875)), width(rem(0.875))]);
@@ -114,7 +99,7 @@ module CountryOption = {
   };
 
   module Styles = {
-    open Css;
+    open DesignSystem;
 
     type interactionState =
       | Selected
@@ -129,9 +114,9 @@ module CountryOption = {
         alignItems(center),
         backgroundColor(
           switch (getInteractionState(~isFocused, ~isSelected)) {
-          | Selected => rgba(255, 219, 179, 1.0)
-          | Focused => rgba(255, 219, 179, 0.25)
-          | Blurred => transparent
+          | Selected => Light(Background(Selected))
+          | Focused => Light(Background(Focused))
+          | Blurred => Transparent
           },
         ),
         display(flexBox),
@@ -143,10 +128,9 @@ module CountryOption = {
     let text = style([flex(`num(1.0))]);
 
     let count =
-      style([
-        color(rgba(0, 0, 0, 0.52)),
-        fontSize(rem(0.75)),
-        lineHeight(rem(0.875)),
+      merge([
+        typography(Text(XSmall)),
+        style([color(Light(Text(Secondary)))]),
       ]);
   };
 
@@ -195,36 +179,31 @@ module CountryOption = {
 };
 
 module Styles = {
-  open Css;
+  open DesignSystem;
 
   let select =
     merge([
-      CommonStyles.typography,
+      typography(Text(Medium)),
       style([
         width(rem(14.375)),
         selector(
           ".country-select__placeholder",
-          [color(rgba(0, 0, 0, 0.32))],
+          [color(Light(Text(Tertiary)))],
         ),
       ]),
     ]);
 
   let menu =
     style([
-      borderTop(rem(0.0625), solid, rgba(0, 0, 0, 0.08)),
+      borderTop(rem(0.0625), solid, Light(Border(LineAlpha))),
       important(position(inherit_)),
       paddingTop(rem(0.25)),
     ]);
 
   let error =
     merge([
-      CommonStyles.typography,
-      style([
-        backgroundColor(rgba(255, 0, 0, 0.1)),
-        borderRadius(rem(0.1875)),
-        color(red),
-        padding2(~h=rem(0.5), ~v=rem(0.25)),
-      ]),
+      typography(Text(Medium)),
+      style([color(Light(Text(Error)))]),
     ]);
 };
 
@@ -290,7 +269,9 @@ let make = (~className=?, ~country: option(string), ~onChange) => {
       <ReactSelect
         autoFocus=true
         backspaceRemovesValue=false
-        className={className |> StyleUtils.extendBaseStyle(Styles.select)}
+        className={
+          className |> DesignSystem.Utils.extendBaseStyle(Styles.select)
+        }
         classNamePrefix="country-select"
         classNames={menu: _state => Styles.menu}
         controlShouldRenderValue=false

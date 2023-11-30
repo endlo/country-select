@@ -1,6 +1,6 @@
 module Horizontal = {
   module Styles = {
-    open Css;
+    open DesignSystem;
 
     let container = (~size) => style([flexShrink(0.0), width(px(size))]);
   };
@@ -11,7 +11,7 @@ module Horizontal = {
 
 module Vertical = {
   module Styles = {
-    open Css;
+    open DesignSystem;
 
     let container = (~size) => style([flexShrink(0.0), height(px(size))]);
   };
