@@ -8,7 +8,7 @@
     "bundle": "webpack --mode production --entry ./_build/default/src/output/src/Index.js",
     "serve": "webpack serve --open --mode development --entry ./_build/default/src/output/src/Index.js",
     "predeploy": "make build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "npm run bundle && gh-pages -d dist"
   },
   "dependencies": {
     "bs-css-emotion": "^1.2.0",
